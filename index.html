@@ -734,7 +734,6 @@
             <p>Современная стоматологическая клиника с опытными специалистами</p>
             <div class="hero-buttons">
                 <a href="tel:+996772070144" class="btn btn-primary">Позвонить</a>
-                <a href="#contact" class="btn btn-secondary">Записаться онлайн</a>
             </div>
         </div>
     </section>
@@ -1015,25 +1014,12 @@
     <section class="contact" id="contact">
         <h2>Свяжитесь с нами</h2>
         <div class="contact-content">
-            <form class="contact-form">
-                <div class="form-group">
-                    <label for="name">Ваше имя</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Номер телефона</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="message">Сообщение</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Отправить</button>
-            </form>
+            <div class="contact-card" style="background: var(--light); padding: 2rem; border-radius: 10px;">
+                <h3>Онлайн‑запись отключена</h3>
+                <p>Для записи, пожалуйста, позвоните или напишите в WhatsApp:</p>
+                <p style="margin: .5rem 0;"><a href="tel:+996772070144">+996 772-07-01-44</a><br><a href="tel:+996770004473">+996 770-00-44-73</a></p>
+                <p style="margin: .5rem 0;"><a href="https://wa.me/996507140115">Написать в WhatsApp</a></p>
+            </div>
 
             <div class="contact-info">
                 <div class="contact-item">
@@ -1103,12 +1089,7 @@
             });
         });
 
-        // Form submission
-        document.querySelector('.contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Спасибо за вашу заявку! Мы свяжемся с вами в ближайшее время.');
-            this.reset();
-        });
+        // Онлайн-запись отключена — обработчик формы удалён
 
         // Mobile nav toggle with aria update
         (function() {
