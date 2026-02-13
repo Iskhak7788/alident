@@ -288,6 +288,15 @@
             color: var(--primary-color);
         }
 
+        /* Review form */
+        .review-form {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+        }
+
+
         .reviews-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -986,6 +995,15 @@
     <!-- Reviews Section -->
     <section class="reviews" id="reviews">
         <h2>Отзывы наших пациентов</h2>
+        <form id="review-form" class="review-form" aria-label="Добавить отзыв">
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                <input id="review-name" type="text" placeholder="Ваше имя" required style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;">
+                <button type="submit" class="btn btn-primary" style="padding:8px 16px; border-radius:6px;">Добавить</button>
+            </div>
+            <div style="margin-top:0.75rem;">
+                <textarea id="review-text" placeholder="Ваш отзыв" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ddd; min-height:80px;"></textarea>
+            </div>
+        </form>
         <div class="reviews-grid">
             <div class="review-card">
                 <div class="stars">⭐⭐⭐⭐⭐</div>
@@ -1082,6 +1100,94 @@
         });
 
         // Онлайн-запись отключена — обработчик формы удалён
+
+        // Reviews: client-side add + localStorage persistence
+        (function() {
+            const REVIEWS_KEY = 'alident_reviews';
+
+            function formatDateRu(d) {
+                try {
+                    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+                } catch (e) {
+                    return d.toISOString().split('T')[0];
+                }
+            }
+
+            function createReviewCard(review) {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+
+                const stars = document.createElement('div');
+                stars.className = 'stars';
+                stars.textContent = '⭐⭐⭐⭐⭐';
+
+                const author = document.createElement('div');
+                author.className = 'review-author';
+                author.textContent = review.name;
+
+                const date = document.createElement('div');
+                date.className = 'review-date';
+                date.textContent = review.date;
+
+                const text = document.createElement('div');
+                text.className = 'review-text';
+                text.textContent = review.text;
+
+                card.appendChild(stars);
+                card.appendChild(author);
+                card.appendChild(date);
+                card.appendChild(text);
+                return card;
+            }
+
+            function loadReviews() {
+                try {
+                    const raw = localStorage.getItem(REVIEWS_KEY);
+                    return raw ? JSON.parse(raw) : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveReviews(list) {
+                try {
+                    localStorage.setItem(REVIEWS_KEY, JSON.stringify(list));
+                } catch (e) { /* ignore */ }
+            }
+
+            function renderStoredReviews() {
+                const container = document.querySelector('.reviews-grid');
+                if (!container) return;
+                const reviews = loadReviews();
+                reviews.slice().reverse().forEach(r => {
+                    const card = createReviewCard(r);
+                    container.insertBefore(card, container.firstChild);
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                renderStoredReviews();
+                const form = document.getElementById('review-form');
+                if (!form) return;
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const nameEl = document.getElementById('review-name');
+                    const textEl = document.getElementById('review-text');
+                    if (!nameEl || !textEl) return;
+                    const name = nameEl.value.trim();
+                    const text = textEl.value.trim();
+                    if (!name || !text) return;
+                    const review = { name, text, date: formatDateRu(new Date()) };
+                    const reviews = loadReviews();
+                    reviews.push(review);
+                    saveReviews(reviews);
+                    const card = createReviewCard(review);
+                    const container = document.querySelector('.reviews-grid');
+                    if (container) container.insertBefore(card, container.firstChild);
+                    form.reset();
+                });
+            });
+        })();
 
         // Mobile nav toggle with aria update
         (function() {
